@@ -9,7 +9,11 @@ from gtts import gTTS
 import tempfile
 import os
 from PIL import Image
-from pyzbar import pyzbar
+try:
+    from pyzbar import pyzbar
+    PYZBAR_AVAILABLE = True
+except Exception:
+    PYZBAR_AVAILABLE = False
 import numpy as np
 
 st.set_page_config(page_title="AI Fashion-Pulse Dashboard", layout="wide", page_icon="👗")
@@ -220,6 +224,8 @@ def run_query(query, params=()):
 # BARCODE SCANNER FUNCTION
 # ─────────────────────────────────────────────
 def scan_barcode(image_file):
+    if not PYZBAR_AVAILABLE:
+        return None
     try:
         image = Image.open(image_file)
         img_array = np.array(image)
@@ -227,9 +233,8 @@ def scan_barcode(image_file):
         if barcodes:
             return barcodes[0].data.decode('utf-8')
         return None
-    except Exception as e:
+    except:
         return None
-
 
 # ─────────────────────────────────────────────
 # VOICE FUNCTION
